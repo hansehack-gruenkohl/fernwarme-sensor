@@ -40,7 +40,7 @@ void do_send(osjob_t* job) {
     lora_payload fields[LORA_FIELD_COUNT];
     lora_prepareTypes(types);
 
-    types[0] = PAYLOAD_TYPE_FLOAT;
+    types[0] = PAYLOAD_TYPE_INT;
     fields[0].i = waterflow_measure();
 
     lora_send(types, fields);
