@@ -8,12 +8,16 @@
 #define LED_2 6
 #define LED_3 11
 #define LED_4 12
+#define POTI_LED LED_1
 #define TRANSMITTING_LED LED_3
 
 #define WATER_FLOW_SENSOR_PORT 13
 
+#define SEND_INTERVAL_IN A0
+
 static osjob_t sendjob;
-const unsigned TX_INTERVAL = 30;
+unsigned transmit_interval = 30;
+int send_interval_in = 0;
 
 void onEvent(ev_t ev) {
     switch (ev) {
@@ -22,7 +26,10 @@ void onEvent(ev_t ev) {
         Serial.println(" ");
         Serial.println("TX COMPLETE");
         digitalWrite(TRANSMITTING_LED, LOW);
-        os_setTimedCallback(&sendjob, os_getTime() + sec2osticks(TX_INTERVAL), do_send);
+        Serial.print("Transmit-Interval = ");
+        Serial.print(transmit_interval, DEC);
+        Serial.println("sec");
+        os_setTimedCallback(&sendjob, os_getTime() + sec2osticks(transmit_interval), do_send);
         break;
     default:
         break;
@@ -52,9 +59,11 @@ void setup() {
     Serial.println("SCS Edu-Kit init");
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(TRANSMITTING_LED, OUTPUT);
+    pinMode(POTI_LED, OUTPUT);
 
     digitalWrite(LED_BUILTIN, HIGH);
     digitalWrite(TRANSMITTING_LED, LOW);
+    digitalWrite(POTI_LED, LOW);
 
     waterflow_init(WATER_FLOW_SENSOR_PORT);
 
@@ -70,4 +79,7 @@ void setup() {
 void loop() {
     os_runloop_once();
     waterflow_measure();
+
+    send_interval_in = analogRead(SEND_INTERVAL_IN);
+    transmit_interval = (send_interval_in < 512) ? 10 : 1;
 }
