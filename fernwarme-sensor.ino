@@ -15,21 +15,21 @@
 static osjob_t sendjob;
 const unsigned TX_INTERVAL = 30;
 
-void onEvent (ev_t ev) {
+void onEvent(ev_t ev) {
     switch (ev) {
-        // data sent out
-        case EV_TXCOMPLETE:
-            Serial.println(" ");
-            Serial.println("TX COMPLETE");
-            digitalWrite(TRANSMITTING_LED, LOW);
-            os_setTimedCallback(&sendjob, os_getTime() + sec2osticks(TX_INTERVAL), do_send);
-            break;
-        default:
-            break;
+    // data has been sent out
+    case EV_TXCOMPLETE:
+        Serial.println(" ");
+        Serial.println("TX COMPLETE");
+        digitalWrite(TRANSMITTING_LED, LOW);
+        os_setTimedCallback(&sendjob, os_getTime() + sec2osticks(TX_INTERVAL), do_send);
+        break;
+    default:
+        break;
     }
 }
 
-void do_send(osjob_t* job) {
+void do_send(osjob_t*) {
     if (lora_isSending()) {
         return;
     }
@@ -52,17 +52,17 @@ void setup() {
     Serial.println("SCS Edu-Kit init");
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(TRANSMITTING_LED, OUTPUT);
-    
+
     digitalWrite(LED_BUILTIN, HIGH);
     digitalWrite(TRANSMITTING_LED, LOW);
 
     waterflow_init(WATER_FLOW_SENSOR_PORT);
 
     os_init();
-    
+
     Serial.begin(9600);
     Serial.println("SETUP!");
-    
+
     lora_init();
     do_send(&sendjob);
 }
