@@ -32,7 +32,7 @@ void lora_init() {
     LMIC_setClockError(MAX_CLOCK_ERROR * 1 / 100);
     LMIC_setLinkCheckMode(0);
     LMIC_setAdrMode(0);
-    LMIC_setDrTxpow(DR_SF8, 14);
+    LMIC_setDrTxpow(DR_SF7, 14);
 }
 
 boolean lora_isSending() {
